@@ -1,0 +1,16 @@
+#include <stdio.h>
+
+int main()
+{
+    char key[20], text[100];
+
+    printf("Enter Key: ");
+    scanf("%s",key);
+
+    printf("Enter Plain Text: ");
+    scanf("%s",text);
+
+    printf("Encrypted Text: %s\n",text);
+
+    return 0;
+}
