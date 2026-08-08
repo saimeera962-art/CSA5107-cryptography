@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main()
+{
+    char text[] = "meet me at the usual place at ten rather than eight oclock";
+    char p[100];
+    int i, j, n = 0;
+
+    int key[2][2] = {
+        {9, 4},
+        {5, 7}
+    };
+
+    int c1, c2;
+
+    /* Remove spaces */
+    for(i = 0; text[i] != '\0'; i++)
+    {
+        if(isalpha(text[i]))
+        {
+            p[n++] = tolower(text[i]);
+        }
+    }
+
+    /* Add X if length is odd */
+    if(n % 2 != 0)
+        p[n++] = 'x';
+
+    p[n] = '\0';
+
+    printf("Plain Text: %s\n", p);
+    printf("Cipher Text: ");
+
+    for(i = 0; i < n; i += 2)
+    {
+        int x = p[i] - 'a';
+        int y = p[i + 1] - 'a';
+
+        c1 = (key[0][0] * x + key[0][1] * y) % 26;
+        c2 = (key[1][0] * x + key[1][1] * y) % 26;
+
+        printf("%c%c", c1 + 'a', c2 + 'a');
+    }
+
+    return 0;
+}
