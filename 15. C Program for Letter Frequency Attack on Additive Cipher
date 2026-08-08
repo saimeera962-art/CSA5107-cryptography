@@ -1,0 +1,114 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char text[200];
+
+double english[26] = {
+    8.2, 1.5, 2.8, 4.3, 12.7, 2.2, 2.0,
+    6.1, 7.0, 0.15, 0.77, 4.0, 2.4, 6.7,
+    7.5, 1.9, 0.095, 6.0, 6.3, 9.1, 2.8,
+    0.98, 2.4, 0.15, 2.0, 0.074
+};
+
+double score(int key)
+{
+    int count[26] = {0};
+    int total = 0;
+    int i;
+    double s = 0;
+
+    for(i = 0; text[i] != '\0'; i++)
+    {
+        if(isalpha(text[i]))
+        {
+            int c = toupper(text[i]) - 'A';
+            int p = (c - key + 26) % 26;
+
+            count[p]++;
+            total++;
+        }
+    }
+
+    for(i = 0; i < 26; i++)
+    {
+        double actual = (count[i] * 100.0) / total;
+        s += (actual - english[i]) *
+             (actual - english[i]);
+    }
+
+    return s;
+}
+
+void decrypt(int key)
+{
+    int i;
+
+    for(i = 0; text[i] != '\0'; i++)
+    {
+        if(isalpha(text[i]))
+        {
+            int c = toupper(text[i]) - 'A';
+            int p = (c - key + 26) % 26;
+
+            printf("%c", p + 'A');
+        }
+        else
+        {
+            printf("%c", text[i]);
+        }
+    }
+
+    printf("\n");
+}
+
+int main()
+{
+    int i, j;
+    int bestKey[10];
+    double bestScore[10];
+
+    printf("Enter Cipher Text:\n");
+    fgets(text, sizeof(text), stdin);
+
+    for(i = 0; i < 10; i++)
+    {
+        bestScore[i] = 999999;
+        bestKey[i] = -1;
+    }
+
+    /* Try all 26 possible keys */
+    for(i = 0; i < 26; i++)
+    {
+        double s = score(i);
+
+        for(j = 0; j < 10; j++)
+        {
+            if(s < bestScore[j])
+            {
+                int k;
+
+                for(k = 9; k > j; k--)
+                {
+                    bestScore[k] = bestScore[k - 1];
+                    bestKey[k] = bestKey[k - 1];
+                }
+
+                bestScore[j] = s;
+                bestKey[j] = i;
+
+                break;
+            }
+        }
+    }
+
+    printf("\nTop 10 Possible Plaintexts:\n\n");
+
+    for(i = 0; i < 10; i++)
+    {
+        printf("%d. Key = %d : ", i + 1, bestKey[i]);
+        decrypt(bestKey[i]);
+    }
+
+    return 0;
+}
