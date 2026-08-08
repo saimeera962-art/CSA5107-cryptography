@@ -1,0 +1,31 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main()
+{
+    char text[] = "send more money";
+    int key[] = {9, 0, 1, 7, 23, 15, 21, 14, 11, 11, 2, 8, 9};
+
+    int i, j = 0;
+    char cipher[100];
+
+    for(i = 0; text[i] != '\0'; i++)
+    {
+        if(isalpha(text[i]))
+        {
+            int p = tolower(text[i]) - 'a';
+
+            cipher[j] = (p + key[j]) % 26 + 'a';
+
+            j++;
+        }
+    }
+
+    cipher[j] = '\0';
+
+    printf("Plain Text : send more money\n");
+    printf("Cipher Text: %s\n", cipher);
+
+    return 0;
+}
