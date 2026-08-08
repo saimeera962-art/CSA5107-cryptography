@@ -1,0 +1,56 @@
+#include <stdio.h>
+#include <string.h>
+
+void xorBlock(char a[], char b[], char result[])
+{
+    int i;
+
+    for(i = 0; i < 8; i++)
+    {
+        result[i] = a[i] ^ b[i];
+    }
+}
+
+void simple3DES(char input[], char key[], char output[])
+{
+    int i;
+
+    /* Simple demonstration of 3DES operation */
+    for(i = 0; i < 8; i++)
+    {
+        output[i] = input[i] ^ key[i];
+    }
+}
+
+int main()
+{
+    char plaintext[9] = "ABCDEFGH";
+    char iv[9] = "12345678";
+    char key[9] = "KEY12345";
+
+    char xored[9];
+    char ciphertext[9];
+
+    plaintext[8] = '\0';
+    iv[8] = '\0';
+    key[8] = '\0';
+
+    /* CBC: P1 XOR IV */
+    xorBlock(plaintext, iv, xored);
+
+    /* Encrypt using 3DES (demonstration) */
+    simple3DES(xored, key, ciphertext);
+
+    ciphertext[8] = '\0';
+
+    printf("Plaintext  : %s\n", plaintext);
+    printf("IV         : %s\n", iv);
+    printf("Ciphertext : ");
+
+    for(int i = 0; i < 8; i++)
+        printf("%02X ", (unsigned char)ciphertext[i]);
+
+    printf("\n");
+
+    return 0;
+}
