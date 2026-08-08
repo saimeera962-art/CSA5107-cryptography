@@ -1,0 +1,72 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+char english[] = "ETAOINSHRDLCUMWFGYPBVKJXQZ";
+
+int main()
+{
+    char cipher[500];
+    int freq[26] = {0};
+    int map[26];
+    int used[26] = {0};
+
+    int i, j, max, pos;
+
+    printf("Enter Cipher Text:\n");
+    fgets(cipher, sizeof(cipher), stdin);
+
+    /* Count frequency of each ciphertext letter */
+    for(i = 0; cipher[i] != '\0'; i++)
+    {
+        if(isalpha(cipher[i]))
+        {
+            int x = toupper(cipher[i]) - 'A';
+            freq[x]++;
+        }
+    }
+
+    /* Find frequency order of ciphertext letters */
+    for(i = 0; i < 26; i++)
+        map[i] = -1;
+
+    for(i = 0; i < 26; i++)
+    {
+        max = -1;
+        pos = -1;
+
+        for(j = 0; j < 26; j++)
+        {
+            if(!used[j] && freq[j] > max)
+            {
+                max = freq[j];
+                pos = j;
+            }
+        }
+
+        if(pos != -1)
+        {
+            map[pos] = english[i] - 'A';
+            used[pos] = 1;
+        }
+    }
+
+    printf("\nPossible Plaintext:\n");
+
+    for(i = 0; cipher[i] != '\0'; i++)
+    {
+        if(isalpha(cipher[i]))
+        {
+            int x = toupper(cipher[i]) - 'A';
+            printf("%c", map[x] + 'A');
+        }
+        else
+        {
+            printf("%c", cipher[i]);
+        }
+    }
+
+    printf("\n");
+
+    return 0;
+}
