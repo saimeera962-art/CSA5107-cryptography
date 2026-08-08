@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int main()
+{
+    int P1 = 10, P2 = 20, P3 = 30;
+    int C1 = 100, C2 = 200, C3 = 300;
+
+    int errorC1;
+    int receivedC1;
+
+    printf("Original Ciphertext Blocks:\n");
+    printf("C1 = %d\n", C1);
+    printf("C2 = %d\n", C2);
+    printf("C3 = %d\n", C3);
+
+    /* Introduce an error in C1 */
+    errorC1 = 1;
+    receivedC1 = C1 ^ errorC1;
+
+    printf("\nAfter 1-bit error in C1:\n");
+    printf("Received C1 = %d\n", receivedC1);
+
+    printf("\nCBC Error Propagation:\n");
+    printf("P1 = Completely corrupted\n");
+    printf("P2 = One corresponding bit is changed\n");
+    printf("P3 = Not affected\n");
+
+    return 0;
+}
