@@ -1,0 +1,17 @@
+#include <stdio.h>
+#include <math.h>
+
+int main()
+{
+    double keys, power;
+
+    keys = tgamma(26);   // 25! = Gamma(26)
+
+    power = log(keys) / log(2);
+
+    printf("Possible Playfair keys = 25!\n");
+    printf("Number of keys = %.0f\n", keys);
+    printf("Approximately = 2^%.2f\n", power);
+
+    return 0;
+}
