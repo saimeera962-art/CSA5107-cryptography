@@ -1,0 +1,170 @@
+#include <stdio.h>
+#include <string.h>
+
+#define BLOCK_SIZE 8
+
+void printBinary(unsigned char x) {
+    for (int i = 7; i >= 0; i--)
+        printf("%d", (x >> i) & 1);
+}
+
+/* Simple encryption function for demonstration */
+unsigned char encryptBlock(unsigned char block, unsigned char key) {
+    return block ^ key;
+}
+
+/* XOR cipher: encryption and decryption are the same */
+unsigned char decryptBlock(unsigned char block, unsigned char key) {
+    return block ^ key;
+}
+
+/* ECB Mode */
+void ECB(unsigned char plain[], int n, unsigned char key) {
+    unsigned char cipher[100];
+
+    printf("\n--- ECB Encryption ---\n");
+
+    for (int i = 0; i < n; i++) {
+        cipher[i] = encryptBlock(plain[i], key);
+
+        printf("Plain Block %d  : ", i + 1);
+        printBinary(plain[i]);
+
+        printf("\nCipher Block %d : ", i + 1);
+        printBinary(cipher[i]);
+
+        printf("\n");
+    }
+
+    printf("\n--- ECB Decryption ---\n");
+
+    for (int i = 0; i < n; i++) {
+        unsigned char decrypted = decryptBlock(cipher[i], key);
+
+        printf("Decrypted Block %d : ", i + 1);
+        printBinary(decrypted);
+        printf("\n");
+    }
+}
+
+/* CBC Mode */
+void CBC(unsigned char plain[], int n, unsigned char key, unsigned char IV) {
+    unsigned char cipher[100];
+    unsigned char previous = IV;
+
+    printf("\n--- CBC Encryption ---\n");
+
+    for (int i = 0; i < n; i++) {
+        unsigned char temp = plain[i] ^ previous;
+
+        cipher[i] = encryptBlock(temp, key);
+
+        printf("Plain Block %d  : ", i + 1);
+        printBinary(plain[i]);
+
+        printf("\nCipher Block %d : ", i + 1);
+        printBinary(cipher[i]);
+
+        printf("\n");
+
+        previous = cipher[i];
+    }
+
+    printf("\n--- CBC Decryption ---\n");
+
+    previous = IV;
+
+    for (int i = 0; i < n; i++) {
+        unsigned char temp = decryptBlock(cipher[i], key);
+
+        unsigned char decrypted = temp ^ previous;
+
+        printf("Decrypted Block %d : ", i + 1);
+        printBinary(decrypted);
+        printf("\n");
+
+        previous = cipher[i];
+    }
+}
+
+/* CFB Mode */
+void CFB(unsigned char plain[], int n, unsigned char key, unsigned char IV) {
+    unsigned char cipher[100];
+    unsigned char previous = IV;
+
+    printf("\n--- CFB Encryption ---\n");
+
+    for (int i = 0; i < n; i++) {
+        unsigned char encryptedIV = encryptBlock(previous, key);
+
+        cipher[i] = plain[i] ^ encryptedIV;
+
+        printf("Plain Block %d  : ", i + 1);
+        printBinary(plain[i]);
+
+        printf("\nCipher Block %d : ", i + 1);
+        printBinary(cipher[i]);
+
+        printf("\n");
+
+        previous = cipher[i];
+    }
+
+    printf("\n--- CFB Decryption ---\n");
+
+    previous = IV;
+
+    for (int i = 0; i < n; i++) {
+        unsigned char encryptedIV = encryptBlock(previous, key);
+
+        unsigned char decrypted = cipher[i] ^ encryptedIV;
+
+        printf("Decrypted Block %d : ", i + 1);
+        printBinary(decrypted);
+        printf("\n");
+
+        previous = cipher[i];
+    }
+}
+
+int main() {
+    unsigned char plain[100];
+    int n;
+
+    unsigned char key = 0xAA;   // 10101010
+    unsigned char IV = 0x55;    // 01010101
+
+    printf("ECB, CBC and CFB Modes Demonstration\n");
+    printf("------------------------------------\n");
+
+    printf("Enter number of complete 8-bit blocks: ");
+    scanf("%d", &n);
+
+    printf("Enter each block as a decimal number (0-255):\n");
+
+    for (int i = 0; i < n; i++) {
+        int temp;
+
+        printf("Block %d: ", i + 1);
+        scanf("%d", &temp);
+
+        plain[i] = (unsigned char)temp;
+    }
+
+    /* Always add an extra padding block */
+    plain[n] = 0x80;   // 10000000 = one '1' bit followed by zeros
+
+    printf("\nPadding Block Added: ");
+    printBinary(plain[n]);
+    printf("\n");
+
+    n++;
+
+    ECB(plain, n, key);
+
+    CBC(plain, n, key, IV);
+
+    CFB(plain, n, key, IV);
+
+    return 0;
+}
