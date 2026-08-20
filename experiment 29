@@ -1,0 +1,59 @@
+#include <stdio.h>
+
+int main() {
+    int stateSize = 1600;
+    int laneSize = 64;
+    int blockSize = 1024;
+
+    // Calculate total number of lanes
+    int totalLanes = stateSize / laneSize;
+
+    // Calculate message/rate lanes
+    int messageLanes = blockSize / laneSize;
+
+    // Calculate capacity lanes
+    int capacityLanes = totalLanes - messageLanes;
+
+    printf("SHA-3 LANE ANALYSIS\n");
+    printf("-------------------\n");
+
+    printf("Total State Size = %d bits\n", stateSize);
+    printf("Lane Size = %d bits\n", laneSize);
+    printf("Block Size = %d bits\n", blockSize);
+
+    printf("\nTotal Lanes = %d\n", totalLanes);
+    printf("Message/Rate Lanes = %d\n", messageLanes);
+    printf("Capacity Lanes = %d\n", capacityLanes);
+
+    printf("\nInitial State of Lanes:\n");
+
+    // First 16 lanes contain message data
+    for (int i = 0; i < messageLanes; i++) {
+        printf("Lane %d : NON-ZERO\n", i);
+    }
+
+    // Last 9 lanes are capacity lanes and initially zero
+    for (int i = messageLanes; i < totalLanes; i++) {
+        printf("Lane %d : ZERO\n", i);
+    }
+
+    printf("\nAnalysis:\n");
+    printf("The first message block affects only the first %d lanes.\n",
+           messageLanes);
+
+    printf("The remaining %d capacity lanes are initially zero.\n",
+           capacityLanes);
+
+    printf("The SHA-3 permutation is ignored.\n");
+
+    printf("\nFinal Answer:\n");
+    printf("Without the permutation, the original capacity lanes\n");
+    printf("do not receive any message data.\n");
+
+    printf("Therefore, all %d capacity lanes remain zero forever.\n",
+           capacityLanes);
+
+    printf("Time required for all capacity lanes to become non-zero = INFINITE\n");
+
+    return 0;
+}
