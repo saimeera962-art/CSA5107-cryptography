@@ -1,0 +1,29 @@
+#include <stdio.h>
+
+int main() {
+    int choice;
+
+    printf("RSA Private Key Leak Analysis\n");
+    printf("-----------------------------\n");
+    printf("Bob's private key has been leaked.\n");
+    printf("Bob wants to keep the same modulus n.\n");
+    printf("He wants to generate only a new public key e\n");
+    printf("and a new private key d.\n\n");
+
+    printf("Is this safe?\n");
+    printf("Enter 1 for YES or 0 for NO: ");
+    scanf("%d", &choice);
+
+    if (choice == 0) {
+        printf("\nCorrect Answer: NO\n");
+        printf("Reusing the same modulus n is unsafe.\n");
+        printf("Bob must generate new p and q.\n");
+        printf("Then calculate a new n = p * q.\n");
+        printf("Finally, generate new e and d.\n");
+    } else {
+        printf("\nIncorrect Answer.\n");
+        printf("The same modulus n must not be reused.\n");
+    }
+
+    return 0;
+}
