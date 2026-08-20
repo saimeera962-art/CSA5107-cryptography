@@ -1,0 +1,46 @@
+#include <stdio.h>
+#include <stdint.h>
+
+int main() {
+    uint64_t L, K1, K2;
+    uint64_t Rb = 0x1B;
+
+    printf("CMAC Subkey Generation (64-bit Block)\n");
+    printf("--------------------------------------\n");
+
+    printf("Enter L in hexadecimal: ");
+    scanf("%llx", &L);
+
+    // Generate K1
+    if ((L & 0x8000000000000000ULL) == 0) {
+        K1 = L << 1;
+        printf("\nMSB of L = 0\n");
+        printf("K1 = L << 1\n");
+    } else {
+        K1 = (L << 1) ^ Rb;
+        printf("\nMSB of L = 1\n");
+        printf("K1 = (L << 1) XOR Rb\n");
+    }
+
+    // Generate K2
+    if ((K1 & 0x8000000000000000ULL) == 0) {
+        K2 = K1 << 1;
+        printf("\nMSB of K1 = 0\n");
+        printf("K2 = K1 << 1\n");
+    } else {
+        K2 = (K1 << 1) ^ Rb;
+        printf("\nMSB of K1 = 1\n");
+        printf("K2 = (K1 << 1) XOR Rb\n");
+    }
+
+    printf("\n--- Results ---\n");
+    printf("L  = %016llX\n", (unsigned long long)L);
+    printf("K1 = %016llX\n", (unsigned long long)K1);
+    printf("K2 = %016llX\n", (unsigned long long)K2);
+
+    printf("\nCMAC Constants:\n");
+    printf("For 64-bit block  : Rb = 0x1B\n");
+    printf("For 128-bit block : Rb = 0x87\n");
+
+    return 0;
+}
