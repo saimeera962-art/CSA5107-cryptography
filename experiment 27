@@ -1,0 +1,49 @@
+#include <stdio.h>
+
+long long modPower(long long base, long long exp, long long mod) {
+    long long result = 1;
+
+    while (exp > 0) {
+        if (exp % 2 == 1)
+            result = (result * base) % mod;
+
+        base = (base * base) % mod;
+        exp = exp / 2;
+    }
+
+    return result;
+}
+
+int main() {
+    long long e, n;
+    long long cipher;
+    int found = 0;
+
+    printf("Enter public exponent e: ");
+    scanf("%lld", &e);
+
+    printf("Enter modulus n: ");
+    scanf("%lld", &n);
+
+    printf("Enter intercepted ciphertext: ");
+    scanf("%lld", &cipher);
+
+    printf("\nSearching possible plaintext letters...\n");
+
+    for (int p = 0; p < 26; p++) {
+        long long c = modPower(p, e, n);
+
+        if (c == cipher) {
+            printf("\nCiphertext %lld corresponds to:\n", cipher);
+            printf("Plaintext number = %d\n", p);
+            printf("Plaintext letter = %c\n", 'A' + p);
+            found = 1;
+            break;
+        }
+    }
+
+    if (!found)
+        printf("\nNo matching letter found.\n");
+
+    return 0;
+}
