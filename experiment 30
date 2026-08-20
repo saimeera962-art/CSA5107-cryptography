@@ -1,0 +1,43 @@
+#include <stdio.h>
+
+int main() {
+    int X, T, secondBlock;
+
+    printf("CBC-MAC Forgery Demonstration\n");
+    printf("-----------------------------\n");
+
+    printf("Enter one-block message X: ");
+    scanf("%d", &X);
+
+    printf("Enter MAC value T = MAC(K, X): ");
+    scanf("%d", &T);
+
+    // Calculate X XOR T
+    secondBlock = X ^ T;
+
+    printf("\nOriginal one-block message:\n");
+    printf("X = %d\n", X);
+    printf("MAC(K, X) = T = %d\n", T);
+
+    printf("\nForged two-block message:\n");
+    printf("X || (X XOR T)\n");
+    printf("%d || %d\n", X, secondBlock);
+
+    // CBC-MAC proof using XOR
+    int firstCBC = T;
+    int xorValue = firstCBC ^ secondBlock;
+
+    printf("\nCBC-MAC Calculation:\n");
+    printf("First block output = T = %d\n", firstCBC);
+    printf("Second input = T XOR (X XOR T)\n");
+    printf("             = %d XOR %d\n", firstCBC, secondBlock);
+    printf("             = %d\n", xorValue);
+
+    printf("\nSince T XOR T = 0:\n");
+    printf("T XOR (X XOR T) = X\n");
+
+    printf("\nTherefore:\n");
+    printf("MAC(K, X || (X XOR T)) = MAC(K, X) = T\n");
+
+    return 0;
+}
