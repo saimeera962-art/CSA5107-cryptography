@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+int main() {
+    char plaintext[100], ciphertext[100], decrypted[100];
+    int key[100];
+    int i, length;
+
+    printf("One-Time Pad Vigenere Cipher\n");
+    printf("----------------------------\n");
+
+    printf("Enter plaintext (uppercase letters): ");
+    scanf("%s", plaintext);
+
+    length = strlen(plaintext);
+
+    printf("Enter %d key values (0-25):\n", length);
+
+    for (i = 0; i < length; i++) {
+        printf("Key for %c: ", plaintext[i]);
+        scanf("%d", &key[i]);
+
+        // Validate key
+        while (key[i] < 0 || key[i] > 25) {
+            printf("Invalid key! Enter value between 0 and 25: ");
+            scanf("%d", &key[i]);
+        }
+    }
+
+    // Encryption
+    for (i = 0; i < length; i++) {
+        int p = toupper(plaintext[i]) - 'A';
+
+        ciphertext[i] = ((p + key[i]) % 26) + 'A';
+    }
+
+    ciphertext[length] = '\0';
+
+    // Decryption
+    for (i = 0; i < length; i++) {
+        int c = ciphertext[i] - 'A';
+
+        decrypted[i] = ((c - key[i] + 26) % 26) + 'A';
+    }
+
+    decrypted[length] = '\0';
+
+    printf("\nPlaintext  : %s\n", plaintext);
+
+    printf("Key        : ");
+    for (i = 0; i < length; i++) {
+        printf("%d ", key[i]);
+    }
+
+    printf("\nCiphertext : %s\n", ciphertext);
+    printf("Decrypted  : %s\n", decrypted);
+
+    return 0;
+}
