@@ -1,0 +1,73 @@
+#include <stdio.h>
+
+long long powerMod(long long base, long long exp, long long mod) {
+    long long result = 1;
+
+    while (exp > 0) {
+        if (exp % 2 == 1)
+            result = (result * base) % mod;
+
+        base = (base * base) % mod;
+        exp = exp / 2;
+    }
+
+    return result;
+}
+
+// Simple modular inverse
+long long modInverse(long long a, long long m) {
+    a = a % m;
+
+    for (long long x = 1; x < m; x++) {
+        if ((a * x) % m == 1)
+            return x;
+    }
+
+    return -1;
+}
+
+void dsaSign(long long p, long long q, long long g,
+             long long x, long long hash, long long k) {
+    
+    long long r = powerMod(g, k, p) % q;
+    long long kInverse = modInverse(k, q);
+
+    long long s = (kInverse * (hash + x * r)) % q;
+
+    printf("k = %lld\n", k);
+    printf("Signature (r, s) = (%lld, %lld)\n", r, s);
+}
+
+int main() {
+    // Small values only for demonstration
+    long long p = 23;
+    long long q = 11;
+    long long g = 2;
+
+    // Private key
+    long long x = 3;
+
+    // Same message hash
+    long long hash = 9;
+
+    // Two different random values of k
+    long long k1 = 2;
+    long long k2 = 7;
+
+    printf("DSA Signature Demonstration\n");
+    printf("---------------------------\n");
+
+    printf("Message hash = %lld\n\n", hash);
+
+    printf("First signature:\n");
+    dsaSign(p, q, g, x, hash, k1);
+
+    printf("\nSecond signature for the SAME message:\n");
+    dsaSign(p, q, g, x, hash, k2);
+
+    printf("\nConclusion:\n");
+    printf("The message is the same, but k is different.\n");
+    printf("Therefore, the DSA signatures are different.\n");
+
+    return 0;
+}
