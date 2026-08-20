@@ -1,0 +1,42 @@
+#include <stdio.h>
+
+unsigned char sdesEncrypt(unsigned char x) {
+    // Replace with actual S-DES encryption
+    return x ^ 0x39;
+}
+
+int main() {
+    unsigned char plaintext[3] = {0x01, 0x02, 0x04};
+    unsigned char ciphertext[3];
+    unsigned char decrypted[3];
+
+    unsigned char counter = 0x00;
+
+    // Encryption
+    for (int i = 0; i < 3; i++) {
+        unsigned char keyStream = sdesEncrypt(counter);
+        ciphertext[i] = plaintext[i] ^ keyStream;
+        counter++;
+    }
+
+    printf("Ciphertext:\n");
+
+    for (int i = 0; i < 3; i++)
+        printf("%02X ", ciphertext[i]);
+
+    // Decryption
+    counter = 0x00;
+
+    for (int i = 0; i < 3; i++) {
+        unsigned char keyStream = sdesEncrypt(counter);
+        decrypted[i] = ciphertext[i] ^ keyStream;
+        counter++;
+    }
+
+    printf("\nDecrypted Plaintext:\n");
+
+    for (int i = 0; i < 3; i++)
+        printf("%02X ", decrypted[i]);
+
+    return 0;
+}
