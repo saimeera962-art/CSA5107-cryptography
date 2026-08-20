@@ -1,0 +1,129 @@
+#include <stdio.h>
+
+// Find positive modulo
+int mod26(int x) {
+    x = x % 26;
+
+    if (x < 0)
+        x += 26;
+
+    return x;
+}
+
+// Find multiplicative inverse modulo 26
+int modInverse(int a) {
+    a = mod26(a);
+
+    for (int i = 1; i < 26; i++) {
+        if ((a * i) % 26 == 1)
+            return i;
+    }
+
+    return -1;
+}
+
+int main() {
+    int P[2][2], C[2][2];
+    int K[2][2];
+
+    printf("HILL CIPHER KNOWN PLAINTEXT ATTACK (2 x 2)\n");
+    printf("------------------------------------------\n");
+
+    printf("Enter plaintext matrix P (4 values):\n");
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            scanf("%d", &P[i][j]);
+        }
+    }
+
+    printf("Enter ciphertext matrix C (4 values):\n");
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            scanf("%d", &C[i][j]);
+        }
+    }
+
+    // Determinant of P
+    int det = P[0][0] * P[1][1]
+            - P[0][1] * P[1][0];
+
+    det = mod26(det);
+
+    // Find determinant inverse
+    int detInverse = modInverse(det);
+
+    if (detInverse == -1) {
+        printf("\nAttack failed!\n");
+        printf("Plaintext matrix is not invertible modulo 26.\n");
+        return 0;
+    }
+
+    // Calculate inverse of P
+    int PInverse[2][2];
+
+    PInverse[0][0] = mod26(detInverse * P[1][1]);
+    PInverse[0][1] = mod26(detInverse * (-P[0][1]));
+    PInverse[1][0] = mod26(detInverse * (-P[1][0]));
+    PInverse[1][1] = mod26(detInverse * P[0][0]);
+
+    // Calculate K = C × P^-1 mod 26
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            K[i][j] = 0;
+
+            for (int k = 0; k < 2; k++) {
+                K[i][j] += C[i][k] * PInverse[k][j];
+            }
+
+            K[i][j] = mod26(K[i][j]);
+        }
+    }
+
+    // Display plaintext matrix
+    printf("\nPlaintext Matrix P:\n");
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++)
+            printf("%3d ", P[i][j]);
+
+        printf("\n");
+    }
+
+    // Display ciphertext matrix
+    printf("\nCiphertext Matrix C:\n");
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++)
+            printf("%3d ", C[i][j]);
+
+        printf("\n");
+    }
+
+    // Display determinant
+    printf("\nDeterminant of P = %d\n", det);
+    printf("Inverse of determinant modulo 26 = %d\n", detInverse);
+
+    // Display P inverse
+    printf("\nP Inverse modulo 26:\n");
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++)
+            printf("%3d ", PInverse[i][j]);
+
+        printf("\n");
+    }
+
+    // Display recovered key
+    printf("\nRecovered Hill Cipher Key Matrix K:\n");
+
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++)
+            printf("%3d ", K[i][j]);
+
+        printf("\n");
+    }
+
+    return 0;
+}
