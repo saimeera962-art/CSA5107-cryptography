@@ -1,0 +1,92 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+// Find GCD
+int gcd(int a, int b) {
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
+    return a;
+}
+
+// Find modular inverse of a modulo 26
+int modInverse(int a) {
+    for (int i = 1; i < 26; i++) {
+        if ((a * i) % 26 == 1)
+            return i;
+    }
+    return -1;
+}
+
+int main() {
+    char plaintext[100], ciphertext[100], decrypted[100];
+    int a, b;
+    int i;
+
+    printf("Affine Caesar Cipher\n");
+    printf("--------------------\n");
+
+    printf("Enter plaintext: ");
+    scanf("%99s", plaintext);
+
+    printf("Enter value of a: ");
+    scanf("%d", &a);
+
+    printf("Enter value of b: ");
+    scanf("%d", &b);
+
+    // Check whether a is valid
+    if (gcd(a, 26) != 1) {
+        printf("\nInvalid value of a = %d\n", a);
+        printf("For one-to-one encryption, gcd(a, 26) must be 1.\n");
+        printf("Therefore, decryption is not uniquely possible.\n");
+        return 0;
+    }
+
+    int aInverse = modInverse(a);
+
+    // Encryption
+    for (i = 0; plaintext[i] != '\0'; i++) {
+        char ch = toupper(plaintext[i]);
+
+        if (ch >= 'A' && ch <= 'Z') {
+            int p = ch - 'A';
+            int c = (a * p + b) % 26;
+
+            ciphertext[i] = c + 'A';
+        } else {
+            ciphertext[i] = ch;
+        }
+    }
+
+    ciphertext[i] = '\0';
+
+    // Decryption
+    for (i = 0; ciphertext[i] != '\0'; i++) {
+        char ch = ciphertext[i];
+
+        if (ch >= 'A' && ch <= 'Z') {
+            int c = ch - 'A';
+            int p = (aInverse * (c - b + 26)) % 26;
+
+            decrypted[i] = p + 'A';
+        } else {
+            decrypted[i] = ch;
+        }
+    }
+
+    decrypted[i] = '\0';
+
+    printf("\n--- Results ---\n");
+    printf("Plaintext  : %s\n", plaintext);
+    printf("a          : %d\n", a);
+    printf("b          : %d\n", b);
+    printf("a inverse  : %d\n", aInverse);
+    printf("Ciphertext : %s\n", ciphertext);
+    printf("Decrypted  : %s\n", decrypted);
+
+    return 0;
+}
