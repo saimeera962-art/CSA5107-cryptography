@@ -1,0 +1,51 @@
+#include <stdio.h>
+
+int main() {
+    long long a, x, y;
+    long long aliceSent, bobSent;
+    long long aliceFindsY, bobFindsX;
+    long long sharedKey;
+    long long eveFindsX, eveFindsY;
+
+    printf("Enter public number a: ");
+    scanf("%lld", &a);
+
+    printf("Enter Alice secret x: ");
+    scanf("%lld", &x);
+
+    printf("Enter Bob secret y: ");
+    scanf("%lld", &y);
+
+    // Alice and Bob send their values
+    aliceSent = x * a;
+    bobSent = y * a;
+
+    printf("\nAlice sends x * a = %lld\n", aliceSent);
+    printf("Bob sends y * a   = %lld\n", bobSent);
+
+    // Alice and Bob recover each other's secret
+    aliceFindsY = bobSent / a;
+    bobFindsX = aliceSent / a;
+
+    // They agree on a common key
+    sharedKey = x * y;
+
+    printf("\nAlice calculates Bob's secret y = %lld\n", aliceFindsY);
+    printf("Bob calculates Alice's secret x = %lld\n", bobFindsX);
+
+    printf("\nShared Key = x * y = %lld\n", sharedKey);
+
+    // Eve can also recover both secrets
+    eveFindsX = aliceSent / a;
+    eveFindsY = bobSent / a;
+
+    printf("\n--- Eve's Attack ---\n");
+    printf("Eve finds Alice's secret x = %lld\n", eveFindsX);
+    printf("Eve finds Bob's secret y   = %lld\n", eveFindsY);
+    printf("Eve calculates the key     = %lld\n",
+           eveFindsX * eveFindsY);
+
+    printf("\nConclusion: The system is NOT secure.\n");
+
+    return 0;
+}
