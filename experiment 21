@@ -1,0 +1,22 @@
+#include <stdio.h>
+
+int main() {
+    int plaintextBits, blockSize;
+
+    printf("Enter plaintext size in bits: ");
+    scanf("%d", &plaintextBits);
+
+    printf("Enter block size: ");
+    scanf("%d", &blockSize);
+
+    // Always add padding
+    int padding = blockSize - (plaintextBits % blockSize);
+
+    if (padding == 0)
+        padding = blockSize;
+
+    printf("Padding bits required = %d\n", padding);
+    printf("Padding format: 1 followed by %d zeros\n", padding - 1);
+
+    return 0;
+}
