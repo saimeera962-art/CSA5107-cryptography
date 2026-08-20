@@ -1,0 +1,147 @@
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
+#define MAX 500
+#define ALPHABET 26
+
+/* English letters ordered from most frequent to least frequent */
+const char englishOrder[] = "ETAOINSHRDLCUMWFGYPBVKJXQZ";
+
+struct LetterFreq {
+    char letter;
+    int count;
+};
+
+struct Candidate {
+    int shift;
+    char plaintext[MAX];
+};
+
+/* Sort ciphertext letters according to frequency */
+void sortByFrequency(struct LetterFreq freq[]) {
+    struct LetterFreq temp;
+
+    for (int i = 0; i < ALPHABET - 1; i++) {
+        for (int j = i + 1; j < ALPHABET; j++) {
+            if (freq[j].count > freq[i].count) {
+                temp = freq[i];
+                freq[i] = freq[j];
+                freq[j] = temp;
+            }
+        }
+    }
+}
+
+/* Create one possible substitution mapping */
+void createMapping(struct LetterFreq freq[], char mapping[],
+                   int variation) {
+    int i;
+
+    /* Default mapping */
+    for (i = 0; i < ALPHABET; i++) {
+        mapping[i] = '?';
+    }
+
+    /*
+       Most frequent ciphertext letter -> common English letter.
+       variation creates different possible candidates.
+    */
+    for (i = 0; i < ALPHABET; i++) {
+        int englishIndex = (i + variation) % ALPHABET;
+
+        mapping[freq[i].letter - 'A'] =
+            englishOrder[englishIndex];
+    }
+}
+
+/* Apply the substitution mapping */
+void decrypt(char ciphertext[], char mapping[], char plaintext[]) {
+    int i;
+
+    for (i = 0; ciphertext[i] != '\0'; i++) {
+        char ch = ciphertext[i];
+
+        if (isalpha((unsigned char)ch)) {
+            ch = toupper((unsigned char)ch);
+            plaintext[i] = mapping[ch - 'A'];
+        } else {
+            plaintext[i] = ch;
+        }
+    }
+
+    plaintext[i] = '\0';
+}
+
+int main() {
+    char ciphertext[MAX];
+    char mapping[26];
+    struct LetterFreq freq[26];
+    struct Candidate candidates[10];
+
+    int topN;
+
+    printf("MONOALPHABETIC SUBSTITUTION CIPHER ATTACK\n");
+    printf("=========================================\n");
+
+    printf("Enter ciphertext:\n");
+    fgets(ciphertext, MAX, stdin);
+
+    printf("Enter number of top possible plaintexts (1-10): ");
+    scanf("%d", &topN);
+
+    if (topN < 1)
+        topN = 1;
+
+    if (topN > 10)
+        topN = 10;
+
+    /* Initialize frequencies */
+    for (int i = 0; i < 26; i++) {
+        freq[i].letter = 'A' + i;
+        freq[i].count = 0;
+    }
+
+    /* Count letter frequencies */
+    for (int i = 0; ciphertext[i] != '\0'; i++) {
+        if (isalpha((unsigned char)ciphertext[i])) {
+            char ch = toupper((unsigned char)ciphertext[i]);
+            freq[ch - 'A'].count++;
+        }
+    }
+
+    /* Sort letters by frequency */
+    sortByFrequency(freq);
+
+    /* Display frequency analysis */
+    printf("\n--- CIPHERTEXT LETTER FREQUENCY ---\n");
+
+    for (int i = 0; i < 26; i++) {
+        if (freq[i].count > 0) {
+            printf("%c = %d\n", freq[i].letter, freq[i].count);
+        }
+    }
+
+    /* Generate possible plaintexts */
+    for (int attempt = 0; attempt < topN; attempt++) {
+
+        createMapping(freq, mapping, attempt);
+
+        candidates[attempt].shift = attempt;
+
+        decrypt(ciphertext, mapping,
+                candidates[attempt].plaintext);
+    }
+
+    /* Display top possible plaintexts */
+    printf("\n--- TOP %d POSSIBLE PLAINTEXTS ---\n", topN);
+
+    for (int i = 0; i < topN; i++) {
+        printf("\nRank %d:\n", i + 1);
+        printf("Possible Plaintext:\n");
+        printf("%s", candidates[i].plaintext);
+        printf("\n");
+    }
+
+    return 0;
+}
